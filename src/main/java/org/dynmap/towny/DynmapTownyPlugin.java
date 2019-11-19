@@ -59,7 +59,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean reload = false;
     private boolean playersbytown;
     private boolean playersbynation;
-    
+
     FileConfiguration cfg;
     MarkerSet set;
     long updperiod;
@@ -79,12 +79,12 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean chat_sendlogin;
     boolean chat_sendquit;
     String chatformat;
-    
+
     @Override
     public void onLoad() {
         log = this.getLogger();
     }
-    
+
     private static class AreaStyle {
         int strokecolor;
         double strokeopacity;
@@ -113,7 +113,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
             String fcw = cfg.getString(path+".fillColorWilds", null);
             yc = cfg.getInt(path+".y", -1);
             boost = cfg.getBoolean(path+".boost", false);
-            
+
             strokecolor = -1;
             fillcolor = -1;
             fillcolor_shops = -1;
@@ -154,7 +154,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 }
             }
         }
-        
+
         public int getStrokeColor(AreaStyle cust, AreaStyle nat) {
         	if((cust != null) && (cust.strokecolor >= 0))
         		return cust.strokecolor;
@@ -278,11 +278,11 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 return cust.boost;
             else if((nat != null) && nat.boost)
                 return nat.boost;
-            else 
+            else
                 return boost;
         }
     }
-    
+
     public static void info(String msg) {
         log.log(Level.INFO, msg);
     }
@@ -319,7 +319,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
             getServer().getScheduler().scheduleSyncDelayedTask(this, pending_upd_req, 20);
         }
     }*/
-    
+
     private void updateTown(Town town) {
         if(!playersbytown) return;
         Set<String> plids = new HashSet<String>();
@@ -327,6 +327,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         for(Resident r : res) {
             plids.add(r.getName());
         }
+
         String setid = "towny.town." + town.getName();
         PlayerSet set = markerapi.getPlayerSet(setid);  /* See if set exists */
         if(set == null) {
@@ -407,30 +408,40 @@ public class DynmapTownyPlugin extends JavaPlugin {
         }
     }
     */
-    
+
     private Map<String, AreaMarker> resareas = new HashMap<String, AreaMarker>();
     private Map<String, Marker> resmark = new HashMap<String, Marker>();
-    
+
     private String formatInfoWindow(Town town, TownBlockType btype) {
         String v = "<div class=\"regioninfo\">"+infowindow+"</div>";
+        String townName = town.getName();
+
+        if (cfg.getBoolean("underscoresAreSpaces"))
+            townName.replaceAll("_", " ");
+
         if(btype != null)
-            v = v.replace("%regionname%", town.getName() + "(" + btype.toString() + ")");
+            v = v.replace("%regionname%", townName + "(" + btype.toString() + ")");
         else
-            v = v.replace("%regionname%", town.getName());
+            v = v.replace("%regionname%", townName);
+
         v = v.replace("%playerowners%", town.hasMayor()?town.getMayor().getName():"");
         String res = "";
+
         for(Resident r : town.getResidents()) {
         	if(res.length()>0) res += ", ";
         	res += r.getName();
         }
+
         v = v.replace("%playermembers%", res);
         String mgrs = "";
+
         for(Resident r : town.getAssistants()) {
             if(mgrs.length()>0) mgrs += ", ";
             mgrs += r.getName();
         }
+
         v = v.replace("%playermanagers%", res);
-        
+
         String nation = "";
 		try {
 			if(town.hasNation())
@@ -449,7 +460,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         v = v.replace("%flags%", flgs);
         return v;
     }
-    
+
     private boolean isVisible(String id, String worldname) {
         if((visible != null) && (visible.size() > 0)) {
             if((visible.contains(id) == false) && (visible.contains("world:" + worldname) == false)) {
@@ -462,11 +473,11 @@ public class DynmapTownyPlugin extends JavaPlugin {
         }
         return true;
     }
-        
+
     private void addStyle(String resid, String natid, AreaMarker m, TownBlockType btype) {
         AreaStyle as = cusstyle.get(resid);	/* Look up custom style for town, if any */
         AreaStyle ns = nationstyle.get(natid);	/* Look up nation style, if any */
-        
+
         if(btype == null) {
             m.setLineStyle(defstyle.getStrokeWeight(as, ns), defstyle.getStrokeOpacity(as, ns), defstyle.getStrokeColor(as, ns));
         }
@@ -478,7 +489,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         m.setRangeY(y, y);
         m.setBoostFlag(defstyle.getBoost(as, ns));
     }
-    
+
     private MarkerIcon getMarkerIcon(Town town) {
         String id = town.getName();
         AreaStyle as = cusstyle.get(id);
@@ -488,15 +499,15 @@ public class DynmapTownyPlugin extends JavaPlugin {
         		natid = town.getNation().getName();
         } catch (Exception ex) {}
         AreaStyle ns = nationstyle.get(natid);
-        
+
         if(town.isCapital())
             return defstyle.getCapitalMarker(as, ns);
         else
             return defstyle.getHomeMarker(as, ns);
     }
- 
+
     enum direction { XPLUS, ZPLUS, XMINUS, ZMINUS };
-        
+
     /**
      * Find all contiguous blocks, set in target and clear in source
      */
@@ -504,7 +515,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         int cnt = 0;
         ArrayDeque<int[]> stack = new ArrayDeque<int[]>();
         stack.push(new int[] { x, y });
-        
+
         while(stack.isEmpty() == false) {
             int[] nxt = stack.pop();
             x = nxt[0];
@@ -525,14 +536,14 @@ public class DynmapTownyPlugin extends JavaPlugin {
         }
         return cnt;
     }
-    
+
     /* Handle specific town */
     private void handleTown(Town town, Map<String, AreaMarker> newmap, Map<String, Marker> newmark, TownBlockType btype) {
         String name = town.getName();
         double[] x = null;
         double[] z = null;
         int poly_index = 0; /* Index of polygon for given town */
-                
+
         /* Handle areas */
     	List<TownBlock> blocks = town.getTownBlocks();
     	if(blocks.isEmpty())
@@ -705,7 +716,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     m.setLabel(name);   /* Update label */
                 }
                 m.setDescription(desc); /* Set popup */
-            
+
                 /* Set line and fill properties */
                 String nation = NATION_NONE;
                 try {
@@ -735,7 +746,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     double xx = townblocksize*blk.getX() + (townblocksize/2);
                     double zz = townblocksize*blk.getZ() + (townblocksize/2);
                     if(home == null) {
-                        home = set.createMarker(markid, name + " [home]", blk.getWorld().getName(), 
+                        home = set.createMarker(markid, name + " [home]", blk.getWorld().getName(),
                                 xx, 64, zz, ico, false);
                         if(home == null)
                             return;
@@ -751,12 +762,12 @@ public class DynmapTownyPlugin extends JavaPlugin {
             }
         }
     }
-    
+
     /* Update Towny information */
     private void updateTowns() {
         Map<String,AreaMarker> newmap = new HashMap<String,AreaMarker>(); /* Build new map */
         Map<String,Marker> newmark = new HashMap<String,Marker>(); /* Build new map */
-        
+
         /* Loop through towns */
         List<Town> towns = TownyAPI.getInstance().getDataSource().getTowns();
         for(Town t : towns) {
@@ -784,9 +795,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
         /* And replace with new map */
         resareas = newmap;
         resmark = newmark;
-                
+
     }
-    
+
     private class OurServerListener implements Listener {
         @EventHandler(priority=EventPriority.MONITOR)
         public void onPluginEnable(PluginEnableEvent event) {
@@ -857,7 +868,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         }
         */
     }
-    
+
     public void onEnable() {
         info("initializing");
         PluginManager pm = getServer().getPluginManager();
@@ -875,7 +886,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
             return;
         }
         towny = (Towny)p;
-        
+
         p = pm.getPlugin("TownyChat");
         if(p != null) {
             townychat = (Chat)p;
@@ -888,7 +899,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
             prepForChat();
         }
     }
-    
+
     private void prepForChat() {
         /* If townychat is active, and we've found dynmap API */
         if((townychat != null) && townychat.isEnabled() && dynmap.isEnabled()) {
@@ -897,7 +908,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
             info("TownyChat detect: disabling normal chat-to-web processing in Dynmap");
         }
     }
-    
+
     private void activate() {
         markerapi = api.getMarkerAPI();
         if(markerapi == null) {
@@ -907,7 +918,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         /* Connect to towny API */
         tuniv = TownyUniverse.getInstance();
         townblocksize = Coord.getCellSize();
-        
+
         /* Load configuration */
         if(reload) {
             reloadConfig();
@@ -922,7 +933,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         FileConfiguration cfg = getConfig();
         cfg.options().copyDefaults(true);   /* Load defaults, if needed */
         this.saveConfig();  /* Save updates, if needed */
-        
+
         /* Now, add marker set for mobs (make it transient) */
         set = markerapi.getMarkerSet("towny.markerset");
         if(set == null)
@@ -953,7 +964,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         ConfigurationSection sect = cfg.getConfigurationSection("custstyle");
         if(sect != null) {
             Set<String> ids = sect.getKeys(false);
-            
+
             for(String id : ids) {
                 cusstyle.put(id, new AreaStyle(cfg, "custstyle." + id, markerapi));
             }
@@ -961,7 +972,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         sect = cfg.getConfigurationSection("nationstyle");
         if(sect != null) {
             Set<String> ids = sect.getKeys(false);
-            
+
             for(String id : ids) {
                 nationstyle.put(id, new AreaStyle(cfg, "nationstyle." + id, markerapi));
             }
@@ -1010,9 +1021,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
         if(per < 15) per = 15;
         updperiod = (per*20);
         stop = false;
-        
+
         getServer().getScheduler().scheduleSyncDelayedTask(this, new TownyUpdate(), 40);   /* First time is 2 seconds */
-        
+
         info("version " + this.getDescription().getVersion() + " is activated");
     }
 
