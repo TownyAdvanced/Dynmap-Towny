@@ -2,7 +2,12 @@
 /.classpath
 /.project
 /.settings
+
+# VS Code stuff
 /.vscode
+
+# IntelliJ IDEA stuff
+/.idea
 
 #dependencies
 /deps
