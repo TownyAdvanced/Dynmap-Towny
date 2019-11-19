@@ -1,6 +1,6 @@
 # Dynmap-Towny
 
-Dynmap-Towny provides a simple way to add visibility of Towny towns and nations on Dynmap's maps. The plugin depends on the presence of both Dynmap and Towny Advanced, and interacts directly with the Towny API. Updates to zones are automatically processed (on a settable period - default is once per 5 minutes (300 seconds)). By default, the plugin will be active after simply installing it (by unzipping the distribution into the plugins/ directory and restarting the server).
+Dynmap-Towny provides a simple way to add visibility of Towny towns and nations on Dynmap's maps. The plugin depends on the presence of both Dynmap and Towny Advanced, and interacts directly with the Towny API. Updates to zones are automatically processed (on a settable period - default is once per 5 minutes (300 seconds)). By default, the plugin will be active after simply installing it (by dropping `Dynmap-Towny-x.xx.jar` into the plugins/ directory and restarting the server).
 
 Towns of any shape are supported, and a proper outline border is computed and displayed that will encompass all the contiguous blocks of a given town (limitation - 'holes' in the middle of a town may still be shaded to look like part of the town). Outposts, including outposts on other worlds, are supported. Clicking on the town will display a popup with a configurable set of data on the town.
 
@@ -16,14 +16,25 @@ Note: If you are currently using the region component for Towny in Dynmap, you s
 
 ## Supported Versions
 
--   Dynmap v1.7.1 or later 
--   Towny Advanced 0.94.0.2 or later
+-   Dynmap v2.5 or later 
+-   Towny Advanced 0.95.1.0 or later
+
+# Commands
+
+| Command                  | Description                         | Permission            | Default Access              |
+|--------------------------|-------------------------------------|-----------------------|-----------------------------|
+| `/dmt` or `/dynmaptowny` | Shows plugin information and usage. | `dynmaptowny.command` | :heavy_check_mark: Everyone |
+| `/dmt help`              | Alias of `/dmt`.                    | `dynmaptowny.command` | :heavy_check_mark: Everyone |
+| `/dmt reload`            | Reloads `config.yml`.               | `dynmaptowny.reload`  |            :x: OP           |
 
 ## Plugin Configuration
 After the first load, there will be a config.yml file in the plugins/Dynmap-Towny directory. Details of the default configuration, and all the provided settings, can be found [here](https://github.com/hankjordan/Dynmap-Towny/wiki)
 
 ## Building from source
-Place Towny-0.94.0.4.jar, TownyChat-0.55.jar and bukkit.jar a folder named deps in the root directory. Compile using maven. Requires Java 8.
+
+1. Clone the repository.
+2. Run `mvn clean package`.
+3. Put `Dynmap-Towny-x.xx.jar` from the `target` folder in your `plugins` folder.
 
 ## Acknowledgements
 This is a fork of [Dynmap-Towny](https://github.com/webbukkit/Dynmap-Towny).
