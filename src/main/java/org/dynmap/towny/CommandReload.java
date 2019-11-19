@@ -22,8 +22,7 @@ public class CommandReload implements CommandExecutor, TabCompleter {
 
         if (prefix == null) {
             prefix = ChatColor.translateAlternateColorCodes('&', "[&bynmap Towny&r]");
-        }
-        else
+        } else
             prefix = ChatColor.translateAlternateColorCodes('&', prefix);
 
         this.usage = "%prefix%" + "Dynmap-Towny v" + plugin.getDescription().getVersion() + "\n"
@@ -39,7 +38,7 @@ public class CommandReload implements CommandExecutor, TabCompleter {
         }
 
         if (args.length != 1 || args[0].equalsIgnoreCase("help")) {
-            if (player != null && !player.hasPermission("dynmaptowny.command")){
+            if (player != null && !player.hasPermission("dynmaptowny.command")) {
                 return false;
             }
 
@@ -47,7 +46,7 @@ public class CommandReload implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("reload") ) {
+        if (args[0].equalsIgnoreCase("reload")) {
             if (player != null && !player.hasPermission("dynmaptowny.reload")) {
                 return false;
             }
@@ -57,7 +56,7 @@ public class CommandReload implements CommandExecutor, TabCompleter {
             return true;
         }
 
-       return false;
+        return false;
     }
 
     @Override

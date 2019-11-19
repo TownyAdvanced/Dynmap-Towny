@@ -58,15 +58,15 @@ regionstyle:
   fillColorEmbassies: "#00FFFF"
   fillColorWilds: "#00FF00"
   boost: false
-  
+
 # Optional setting to limit which regions to show, by name - if commented out, all regions are shown
 # To show all regions on a given world, add 'world:<worldname>' to the list
 visibleregions: []
-  
+
 # Optional setting to hide specific regions, by name
 # To hide all regions on a given world, add 'world:<worldname>' to the list
 hiddenregions: []
-  
+
 # Optional per-region overrides for regionstyle (any defined replace those in regionstyle)
 custstyle:
   customregion1:
@@ -78,14 +78,14 @@ custstyle:
     boost: false
 
 # Optional per-nation overrides (custstyle has priority over nationstyle),  _none_ is used for towns with no nation
-nationstyle:  
+nationstyle:
   NationOfBlue:
     strokeColor: "#0000FF"
     fillColor: "#0000FF"
     boost: false
   _none_:
     homeicon: "greenflag"
-    
+
 # Chat settings for use with TownyChat
 chat:
   sendlogin: true
