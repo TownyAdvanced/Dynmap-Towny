@@ -419,9 +419,18 @@ public class DynmapTownyPlugin extends JavaPlugin {
     private String formatInfoWindow(Town town, TownBlockType btype) {
         String v = "<div class=\"regioninfo\">" + infowindow + "</div>";
         String townName = town.getName();
+        boolean underscoresAreSpaces = false;
 
-        if (cfg.getBoolean("underscoresAreSpaces"))
-            townName.replaceAll("_", " ");
+        try {
+            underscoresAreSpaces = getConfig().getRoot().getBoolean("underscoresAreSpaces");
+        } catch (NullPointerException e) {
+            getLogger().warning("You don't have underscoresAreSpaces set in plugins/dynmap-towny/config.yml!");
+            getLogger().warning("Consider adding underscoresAreSpaces: true if you want spaces in your town names.");
+        }
+
+        if (underscoresAreSpaces) {
+            townName = townName.replaceAll("_", " ");
+        }
 
         if (btype != null)
             v = v.replace("%regionname%", townName + "(" + btype.toString() + ")");
@@ -546,9 +555,17 @@ public class DynmapTownyPlugin extends JavaPlugin {
     /* Handle specific town */
     private void handleTown(Town town, Map<String, AreaMarker> newmap, Map<String, Marker> newmark, TownBlockType btype) {
         String name = town.getName();
+        String formattedName = name;
         double[] x = null;
         double[] z = null;
         int poly_index = 0; /* Index of polygon for given town */
+
+        try {
+            if (cfg.getBoolean("underscoresAreSpaces"))
+                formattedName = name.replace("_", " ");
+        } catch (NullPointerException e) {
+            // Handled elsewhere.
+        }
 
         /* Handle areas */
         List<TownBlock> blocks = town.getTownBlocks();
@@ -714,7 +731,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     }
                 } else {
                     m.setCornerLocations(x, z); /* Replace corner locations */
-                    m.setLabel(name);   /* Update label */
+                    m.setLabel(formattedName);   /* Update label */
                 }
                 m.setDescription(desc); /* Set popup */
 
@@ -723,6 +740,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 try {
                     if (town.getNation() != null)
                         nation = town.getNation().getName();
+                    if (getConfig().getBoolean("underscoresAreSpaces"))
+                        nation = nation.replaceAll("_", " ");
                 } catch (Exception ex) {
                 }
                 addStyle(town.getName(), nation, m, btype);
@@ -754,7 +773,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                             return;
                     } else {
                         home.setLocation(blk.getWorld().getName(), xx, 64, zz);
-                        home.setLabel(name + " [home]");   /* Update label */
+                        home.setLabel(formattedName + " [home]");   /* Update label */
                         home.setMarkerIcon(ico);
                     }
                     home.setDescription(desc); /* Set popup */
@@ -898,6 +917,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
             activate();
             prepForChat();
         }
+
+        this.getCommand("dynmaptowny").setExecutor(new CommandReload(this));
     }
 
     private void prepForChat() {

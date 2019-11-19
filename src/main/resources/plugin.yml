@@ -6,3 +6,25 @@ api-version: 1.14
 depend: [ dynmap, Towny ]
 softdepend: [ TownyChat ]
 
+commands:
+  dynmaptowny:
+    description: The base command for Dynmap-Towny
+    aliases: [dmt]
+    permission: dynmaptowny.command
+    usage: /dynmaptowny reload
+  dynmaptowny\ reload:
+    description: Reloads the Dynmap-Towny plugin.
+    permission: dynmaptowny.reload
+
+permissions:
+  dynmaptowny.*:
+    description: Full access.
+    children:
+      - dynmaptowny.command
+      - dynmaptowny.reload
+  dynmaptowny.command:
+    description: Allows access to the base /dynmaptowny command.
+    default: true
+  dynmaptowny.reload:
+    description: reloads the Dynmap-Towny configuration file.
+    default: op

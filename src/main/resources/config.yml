@@ -29,8 +29,21 @@ visibility-by-nation: true
 # Convert '_' to ' ' in Town / Nation names
 underscoresAreSpaces: true
 
+# Chat prefix (for commands)
+prefix: "&r[&bDynmap-Towny&r] "
+
 # Format for popup - substitute values for macros
-infowindow: '<div class="infowindow"><span style="font-size:120%;">%regionname% (%nation%)</span><br /> Mayor <span style="font-weight:bold;">%playerowners%</span><br /> Associates <span style="font-weight:bold;">%playermanagers%</span><br/>Flags<br /><span style="font-weight:bold;">%flags%</span></div>'
+infowindow: |-
+  <div class="infowindow">
+  <span style="font-size:120%;">%regionname% (%nation%)</span>
+  <hr />
+  Mayor <span style="font-weight:bold;">%playerowners%</span>
+  <br />
+  Associates <span style="font-weight:bold;">%playermanagers%</span>
+  <br/>Flags
+  <br />
+  <span style="font-weight:bold;">%flags%</span>
+  </div>'
 
 regionstyle:
   strokeColor: "#FF0000"
