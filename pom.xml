@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.dynmap</groupId>
   <artifactId>Dynmap-Towny</artifactId>
-  <version>0.74</version>
-  
+  <version>0.75</version>
+
     <build>
   	  <resources>
 		<resource>
@@ -23,7 +23,7 @@
 		  </excludes>
 		</resource>
 	  </resources>
-  
+
   	<plugins>
  			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -38,44 +38,41 @@
   </build>
      <repositories>
 		<repository>
-			<releases>
-			</releases>
-			<snapshots>
-			</snapshots>
-			<id>dynmap-repo</id>
-			<url>http://repo.mikeprimm.com/</url>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
-        <repository>
-            <id>github-Towny</id>
-            <url>https://maven.pkg.github.com/TownyAdvanced/Towny/packages/</url>
-        </repository> 
+		 <repository>
+			 <id>dynmap-repo</id>
+			 <url>https://repo.mikeprimm.com/</url>
+		 </repository>
 	</repositories>
-  
+
   <dependencies>
   	<dependency>
   		<groupId>us.dynmap</groupId>
   		<artifactId>dynmap-api</artifactId>
-  		<version>2.2</version>
+  		<version>2.5</version>
+		<scope>provided</scope>
   	</dependency>
-    <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/deps/bukkit.jar</systemPath>
-    </dependency>
+	<dependency>
+		<groupId>org.bukkit</groupId>
+		<artifactId>bukkit</artifactId>
+		<version>1.14.4-R0.1-SNAPSHOT</version>
+		<scope>provided</scope>
+	</dependency>
   	<dependency>
-      <groupId>com.palmergames.bukkit.towny</groupId>
-      <artifactId>Towny</artifactId>
-      <version>0.95.0.5</version>
-      <scope>provided</scope>
+      	<groupId>com.palmergames.bukkit.towny</groupId>
+      	<artifactId>Towny</artifactId>
+      	<version>0.95.1.0</version>
+      	<scope>system</scope>
+		<systemPath>${project.basedir}/lib/Towny-0.95.1.0.jar</systemPath>
   	</dependency>
   	<dependency>
   		<groupId>com.palmergames</groupId>
   		<artifactId>TownyChat</artifactId>
-  		<version>0.55</version>
+  		<version>0.62</version>
   		<scope>system</scope>
-  		<systemPath>${project.basedir}/deps/TownyChat-0.55.jar</systemPath>
+  		<systemPath>${project.basedir}/lib/TownyChat-0.62.jar</systemPath>
   	</dependency>
   </dependencies>
   <properties>
