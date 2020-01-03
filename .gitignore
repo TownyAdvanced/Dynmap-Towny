@@ -27,3 +27,7 @@
 
 # Mac filesystem dust
 /.DS_Store
+
+# IDEA Specific
+/.idea
+*.iml
