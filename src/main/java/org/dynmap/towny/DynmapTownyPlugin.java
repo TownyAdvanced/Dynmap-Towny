@@ -735,14 +735,14 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     double xx = townblocksize*blk.getX() + (townblocksize/2);
                     double zz = townblocksize*blk.getZ() + (townblocksize/2);
                     if(home == null) {
-                        home = set.createMarker(markid, name + " [home]", blk.getWorld().getName(), 
+                        home = set.createMarker(markid, name, blk.getWorld().getName(), 
                                 xx, 64, zz, ico, false);
                         if(home == null)
                             return;
                     }
                     else {
                         home.setLocation(blk.getWorld().getName(), xx, 64, zz);
-                        home.setLabel(name + " [home]");   /* Update label */
+                        home.setLabel(name);   /* Update label */
                         home.setMarkerIcon(ico);
                     }
                     home.setDescription(desc); /* Set popup */
@@ -829,6 +829,19 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 api.postPlayerJoinQuitToWeb(player, false);
             }
         }
+
+        @EventHandler(priority=EventPriority.NORMAL)
+        private void onDynMapReload (PluginEnableEvent event) {
+        	if (event.getPlugin().getName().equals("dynmap")) {
+                PluginManager pluginManager = getServer().getPluginManager();
+                if (pluginManager.isPluginEnabled("Dynmap-Towny")) {                	
+	                pluginManager.disablePlugin(DynmapTownyPlugin.this);
+	                pluginManager.enablePlugin(DynmapTownyPlugin.this);
+                }
+        	}
+        	
+        }
+
         /*
         @EventHandler(priority=EventPriority.MONITOR)
         public void onChangePlot(PlayerChangePlotEvent event) {

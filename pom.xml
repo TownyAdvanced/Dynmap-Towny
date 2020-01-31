@@ -1,84 +1,83 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.dynmap</groupId>
-  <artifactId>Dynmap-Towny</artifactId>
-  <version>0.74</version>
-  
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.dynmap</groupId>
+    <artifactId>Dynmap-Towny</artifactId>
+    <version>0.75</version>
+
     <build>
-  	  <resources>
-		<resource>
-		  <directory>src/main/resources</directory>
-		  <filtering>true</filtering>
-		  <includes>
-			<include>*.yml</include>
-			<include>*.txt</include>
-		  </includes>
-		</resource>
-		<resource>
-		  <directory>src/main/resources</directory>
-		  <filtering>false</filtering>
-		  <excludes>
-			<exclude>*.yml</exclude>
-			<exclude>*.txt</exclude>
-		  </excludes>
-		</resource>
-	  </resources>
-  
-  	<plugins>
- 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-  	</plugins>
-  </build>
-     <repositories>
-		<repository>
-			<releases>
-			</releases>
-			<snapshots>
-			</snapshots>
-			<id>dynmap-repo</id>
-			<url>http://repo.mikeprimm.com/</url>
-		</repository>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.yml</include>
+                    <include>*.txt</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>*.yml</exclude>
+                    <exclude>*.txt</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
         <repository>
             <id>github-Towny</id>
-            <url>https://maven.pkg.github.com/TownyAdvanced/Towny/packages/</url>
-        </repository> 
-	</repositories>
-  
-  <dependencies>
-  	<dependency>
-  		<groupId>us.dynmap</groupId>
-  		<artifactId>dynmap-api</artifactId>
-  		<version>2.2</version>
-  	</dependency>
-    <dependency>
+            <url>https://maven.pkg.github.com/TownyAdvanced/Towny/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>dynmap-repo</id>
+            <url>http://repo.mikeprimm.com/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.14.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>us.dynmap</groupId>
+            <artifactId>dynmap-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.palmergames.bukkit.towny</groupId>
+            <artifactId>Towny</artifactId>
+            <version>0.95.2.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.palmergames</groupId>
+            <artifactId>TownyChat</artifactId>
+            <version>0.65</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/deps/bukkit.jar</systemPath>
-    </dependency>
-  	<dependency>
-      <groupId>com.palmergames.bukkit.towny</groupId>
-      <artifactId>Towny</artifactId>
-      <version>0.95.0.5</version>
-      <scope>provided</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.palmergames</groupId>
-  		<artifactId>TownyChat</artifactId>
-  		<version>0.55</version>
-  		<scope>system</scope>
-  		<systemPath>${project.basedir}/deps/TownyChat-0.55.jar</systemPath>
-  	</dependency>
-  </dependencies>
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+            <systemPath>${project.basedir}/deps/TownyChat-0.65.jar</systemPath>
+        </dependency>
+    </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>
