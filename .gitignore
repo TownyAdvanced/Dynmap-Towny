@@ -4,6 +4,9 @@
 /.settings
 /.vscode
 
+# Intellij
+.idea
+
 #dependencies
 /deps
 
