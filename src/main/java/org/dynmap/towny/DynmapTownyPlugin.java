@@ -463,10 +463,10 @@ public class DynmapTownyPlugin extends JavaPlugin {
         return true;
     }
         
-    private void addStyle(String resid, String natid, AreaMarker m, TownBlockType btype) {
+    private void addStyle(Town town, String resid, String natid, AreaMarker m, TownBlockType btype) {
         AreaStyle as = cusstyle.get(resid);	/* Look up custom style for town, if any */
         AreaStyle ns = nationstyle.get(natid);	/* Look up nation style, if any */
-        
+
         if(btype == null) {
             m.setLineStyle(defstyle.getStrokeWeight(as, ns), defstyle.getStrokeOpacity(as, ns), defstyle.getStrokeColor(as, ns));
         }
@@ -477,6 +477,29 @@ public class DynmapTownyPlugin extends JavaPlugin {
         double y = defstyle.getY(as, ns);
         m.setRangeY(y, y);
         m.setBoostFlag(defstyle.getBoost(as, ns));
+
+        //If the nation, in-game, has chosen some style settings, use those
+        try {
+            if(town.hasNation()) {
+                Nation nation = town.getNation();
+                String nationBoard = nation.getNationBoard();
+
+                if(nationBoard.contains("map_border_style=")) {
+                    String[] styleValues = nationBoard.split("map_border_style=")[1].split(",");
+                    int strokeColor =  Integer.parseInt(styleValues[0].trim());
+                    double strokeOpacity = Double.parseDouble(styleValues[1].trim());
+                    int strokeWeight = Integer.parseInt(styleValues[2].trim());
+                    m.setLineStyle(strokeColor, strokeOpacity, strokeWeight);
+                }
+                if(nationBoard.contains("map_fill_style=")) {
+                    String[] styleValues = nationBoard.split("map_fill_style=")[1].split(",");
+                    int fillColor =  Integer.parseInt(styleValues[0].trim());
+                    double fillOpacity = Double.parseDouble(styleValues[1].trim());
+                    m.setFillStyle(fillColor, fillOpacity);
+                }
+            }
+        } catch (Exception ex) {}
+
     }
     
     private MarkerIcon getMarkerIcon(Town town) {
@@ -712,7 +735,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 	if(town.getNation() != null)
                 		nation = town.getNation().getName();
                 } catch (Exception ex) {}
-                addStyle(town.getName(), nation, m, btype);
+                addStyle(town, town.getName(), nation, m, btype);
 
                 /* Add to map */
                 newmap.put(polyid, m);
