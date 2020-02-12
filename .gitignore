@@ -6,6 +6,7 @@
 
 # Intellij
 .idea
+*.iml
 
 #dependencies
 /deps

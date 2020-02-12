@@ -466,7 +466,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
     private void addStyle(Town town, String resid, String natid, AreaMarker m, TownBlockType btype) {
         AreaStyle as = cusstyle.get(resid);	/* Look up custom style for town, if any */
         AreaStyle ns = nationstyle.get(natid);	/* Look up nation style, if any */
-
+        
         if(btype == null) {
             m.setLineStyle(defstyle.getStrokeWeight(as, ns), defstyle.getStrokeOpacity(as, ns), defstyle.getStrokeColor(as, ns));
         }
@@ -495,7 +495,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     String[] styleValues = nationBoard.split("map_fill_style=")[1].split(",");
                     int fillColor =  Integer.parseInt(styleValues[0].trim());
                     double fillOpacity = Double.parseDouble(styleValues[1].trim());
-                    m.setFillStyle(fillColor, fillOpacity);
+                    m.setFillStyle(fillColor, (int)fillOpacity);
                 }
             }
         } catch (Exception ex) {}
