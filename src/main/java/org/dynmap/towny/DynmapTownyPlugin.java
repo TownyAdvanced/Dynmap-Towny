@@ -484,18 +484,18 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 Nation nation = town.getNation();
                 String nationBoard = nation.getNationBoard();
 
-                if(nationBoard.contains("map_border_style=")) {
-                    String[] styleValues = nationBoard.split("map_border_style=")[1].split(",");
-                    int strokeColor =  Integer.parseInt(styleValues[0].trim());
-                    double strokeOpacity = Double.parseDouble(styleValues[1].trim());
-                    int strokeWeight = Integer.parseInt(styleValues[2].trim());
-                    m.setLineStyle(strokeColor, strokeOpacity, strokeWeight);
-                }
-                if(nationBoard.contains("map_fill_style=")) {
-                    String[] styleValues = nationBoard.split("map_fill_style=")[1].split(",");
-                    int fillColor =  Integer.parseInt(styleValues[0].trim());
-                    double fillOpacity = Double.parseDouble(styleValues[1].trim());
-                    m.setFillStyle(fillColor, (int)fillOpacity);
+                if(nationBoard.contains("mapcolor-")) {
+                    String[] styleValues = nationBoard.split("mapcolor-")[1].split(",");
+                    int nationColor =  Integer.parseInt(styleValues[0].trim());
+
+                    //Set stroke style
+                    double strokeOpacity = m.getLineOpacity();
+                    int strokeWeight = m.getLineWeight();
+                    m.setLineStyle(nationColor, strokeOpacity, strokeWeight);
+
+                    //Set fill style
+                    double fillOpacity = m.getFillOpacity();
+                    m.setFillStyle(nationColor, (int)fillOpacity);
                 }
             }
         } catch (Exception ex) {}
