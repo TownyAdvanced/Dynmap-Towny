@@ -491,11 +491,11 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     //Set stroke style
                     double strokeOpacity = m.getLineOpacity();
                     int strokeWeight = m.getLineWeight();
-                    m.setLineStyle(nationColor, strokeOpacity, strokeWeight);
+                    m.setLineStyle(strokeWeight, strokeOpacity, nationColor);
 
                     //Set fill style
                     double fillOpacity = m.getFillOpacity();
-                    m.setFillStyle(nationColor, (int)fillOpacity);
+                    m.setFillStyle(fillOpacity, nationColor);
                 }
             }
         } catch (Exception ex) {}
