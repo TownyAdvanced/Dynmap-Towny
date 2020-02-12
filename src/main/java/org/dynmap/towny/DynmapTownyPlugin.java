@@ -486,7 +486,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 
                 if(nationBoard.contains("mapcolor-")) {
                     String[] styleValues = nationBoard.split("mapcolor-")[1].split(",");
-                    int nationColor =  Integer.parseInt(styleValues[0].trim());
+                    int nationColor =  Integer.parseInt(styleValues[0].trim(), 16);
 
                     //Set stroke style
                     double strokeOpacity = m.getLineOpacity();
