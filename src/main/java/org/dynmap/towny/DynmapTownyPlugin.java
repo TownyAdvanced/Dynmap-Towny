@@ -482,10 +482,10 @@ public class DynmapTownyPlugin extends JavaPlugin {
         try {
             if(town.hasNation()) {
                 Nation nation = town.getNation();
-                String nationBoard = nation.getNationBoard();
+                String nationBoardLowerCase = nation.getNationBoard().toLowerCase();
 
-                if(nationBoard.toLowerCase().contains("mapcolor-")) {
-                    String colorAsString = nationBoard.toLowerCase().split("mapcolor-")[1].split("-")[0].trim();
+                if(nationBoardLowerCase.contains("mapcolor-")) {
+                    String colorAsString = nationBoardLowerCase.split("mapcolor-")[1].split("-")[0].trim();
                     int nationColor =  Integer.parseInt(colorAsString, 16);
 
                     //Set stroke style
