@@ -811,20 +811,6 @@ public class DynmapTownyPlugin extends JavaPlugin {
     }
     
     private class OurServerListener implements Listener {
-        @EventHandler(priority=EventPriority.MONITOR)
-        public void onPluginEnable(PluginEnableEvent event) {
-            Plugin p = event.getPlugin();
-            String name = p.getDescription().getName();
-            if(name.equals("dynmap") || name.equals("Towny")) {
-                if(dynmap.isEnabled() && towny.isEnabled()) {
-                    activate();
-                    prepForChat();
-                }
-            }
-            else if(name.equals("TownyChat")) {
-                prepForChat();
-            }
-        }
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onWebchatEvent(DynmapWebChatEvent event) {
