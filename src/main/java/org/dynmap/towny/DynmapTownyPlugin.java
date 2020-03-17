@@ -743,6 +743,35 @@ public class DynmapTownyPlugin extends JavaPlugin {
             }
         }
         if(btype == null) {
+
+            /* If town is under siege, add marker to show*/
+            try {
+                if(town.hasSiege() && town.getSiege().getStatus() == SiegeStatus.IN_PROGRESS) {
+                    MarkerIcon siegeIcon = markerapi.getMarkerIcon("fire");
+                    SiegeZone siegeZone = town.getSiege().getSiegeZones().values().toArray(new SiegeZone[1])[0];
+                    String siegeZoneLabel = "Attacker: " + siegeZone.getAttackingNation().getName();
+                    Location siegeBannerLocation = siegeZone.getFlagLocation();
+                    double siegeX = siegeBannerLocation.getX();
+                    double siegeZ = siegeBannerLocation.getZ();
+                    String siegeMarkerId = town.getName() + "__siege";
+                    Marker siegeMarker = resmark.remove(siegeMarkerId);
+                    if(siegeMarker == null) {
+                        siegeMarker = set.createMarker(siegeMarkerId, name, town.getWorld().getName(),
+                                siegeX, 64, siegeZ, siegeIcon, false);
+                    } else {
+                        siegeMarker.setLocation(town.getWorld().getName(), siegeX, 64, siegeZ);
+                        siegeMarker.setLabel(siegeZoneLabel);
+                        siegeMarker.setMarkerIcon(siegeIcon);
+                    }
+
+                    if(siegeMarker != null) {
+                        newmark.put(siegeMarkerId, siegeMarker);
+                    }
+                }
+            } catch (Exception ex) {
+                severe("Problem adding siege marker " + ex);
+            }
+
             /* Now, add marker for home block */
             TownBlock blk = null;
             try {
