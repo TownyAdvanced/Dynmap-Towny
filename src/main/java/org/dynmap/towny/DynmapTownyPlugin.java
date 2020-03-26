@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 
 import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
 import com.palmergames.bukkit.towny.war.siegewar.locations.SiegeZone;
+import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarDynmapUtil;
+import com.palmergames.util.TimeMgmt;
+import com.palmergames.util.TimeTools;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -62,10 +65,13 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean reload = false;
     private boolean playersbytown;
     private boolean playersbynation;
-    
+    private boolean tacticalVisibilityEnabled;
+    private int tacticalVisibilityUpdateTickSeconds;
+    private long updateTownsEta = 0;
     FileConfiguration cfg;
     MarkerSet set;
     long updperiod;
+    int updatePeriodSeconds;
     boolean use3d;
     String infowindow;
     AreaStyle defstyle;
@@ -295,11 +301,24 @@ public class DynmapTownyPlugin extends JavaPlugin {
 
     private class TownyUpdate implements Runnable {
         public void run() {
-            if(!stop) {
-                updateTowns();
-                updateTownPlayerSets();
-                updateNationPlayerSets();
-                getServer().getScheduler().scheduleSyncDelayedTask(DynmapTownyPlugin.this, this, updperiod);
+            if (!stop) {
+                if (tacticalVisibilityEnabled) {
+                    //Update towns on a slow tick
+                    if (System.currentTimeMillis() > updateTownsEta) {
+                        updateTowns();
+                        updateTownsEta = System.currentTimeMillis() + (long) (updatePeriodSeconds * TimeMgmt.ONE_SECOND_IN_MILLIS);
+                    }
+                    //Update players according to tactical visibility
+                    updatePlayersByTacticalVisibility();
+
+                    //Schedule next tick
+                    getServer().getScheduler().scheduleSyncDelayedTask(DynmapTownyPlugin.this, this, TimeTools.convertToTicks(tacticalVisibilityUpdateTickSeconds));
+                } else {
+                    updateTowns();
+                    updateTownPlayerSets();
+                    updateNationPlayerSets();
+                    getServer().getScheduler().scheduleSyncDelayedTask(DynmapTownyPlugin.this, this, updperiod);
+                }
             }
         }
     }
@@ -372,6 +391,26 @@ public class DynmapTownyPlugin extends JavaPlugin {
         Map<String, Nation> nations = TownyUniverse.getInstance().getNationsMap();
         for(Nation n : nations.values()) {
             updateNation(n);
+        }
+    }
+
+    private void updatePlayersByTacticalVisibility() {
+        //Get id's of visible players
+        Set<String> playerIds = new HashSet<>();
+        Set<Player> players = SiegeWarDynmapUtil.getDynmapVisiblePlayers();
+        for(Player player : players) {
+            playerIds.add(player.getName());
+        }
+
+        //Create or update player set
+        String setId = "towny.tactically.visible.players";
+        PlayerSet set = markerapi.getPlayerSet(setId);  /* See if set exists */
+        if(set == null) {
+            markerapi.createPlayerSet(setId, true, playerIds, false);
+            info("Added player visibility set for tactically visible players: " + setId);
+        }
+        else {
+            set.setPlayers(playerIds);
         }
     }
 
@@ -1059,10 +1098,27 @@ public class DynmapTownyPlugin extends JavaPlugin {
             }
         }
 
+        //Setup tactical hiding
+        tacticalVisibilityEnabled = cfg.getBoolean("tactical-visibility.enabled", false);
+        if(tacticalVisibilityEnabled) {
+            try {
+                if (!api.testIfPlayerInfoProtected()) {
+                    tacticalVisibilityEnabled = false;
+                    info("Dynmap does not have player-info-protected enabled - tactical-visibility will have no effect");
+                } else {
+                    tacticalVisibilityEnabled = true;
+                    tacticalVisibilityUpdateTickSeconds = cfg.getInt("tactical-visibility.update-tick-seconds", 5);
+                }
+            } catch (NoSuchMethodError x) {
+                tacticalVisibilityEnabled = false;
+                info("Dynmap does not support function needed for 'tactical-visibility' - need to upgrade");
+            }
+        }
+
         /* Set up update job - based on periond */
-        int per = cfg.getInt("update.period", 300);
-        if(per < 15) per = 15;
-        updperiod = (per*20);
+        updatePeriodSeconds = cfg.getInt("update.period", 300);
+        if(updatePeriodSeconds < 15) updatePeriodSeconds = 15;
+        updperiod = (updatePeriodSeconds*20);
         stop = false;
         
         getServer().getScheduler().scheduleSyncDelayedTask(this, new TownyUpdate(), 40);   /* First time is 2 seconds */

@@ -1,7 +1,7 @@
 # Dynmap-Towny configuration
 #
 update:
-  # Seconds between checks for Residence updates
+  # Seconds between checks for town/nation updates
   period: 300
 
 layer:
@@ -50,7 +50,11 @@ visibleregions: []
 # Optional setting to hide specific regions, by name
 # To hide all regions on a given world, add 'world:<worldname>' to the list
 hiddenregions: []
-  
+
+tactical-visibility:
+  enabled: true
+  update-tick-seconds: 5
+
 # Optional per-region overrides for regionstyle (any defined replace those in regionstyle)
 custstyle:
   customregion1:
