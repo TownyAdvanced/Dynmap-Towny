@@ -68,15 +68,15 @@
             <groupId>com.palmergames.bukkit.towny</groupId>
             <artifactId>Towny</artifactId>
             <version>0.96.1.0</version>
-            <scope>provided</scope>
+            <scope>system</scope>
             <systemPath>${project.basedir}/deps/Towny-0.96.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>
             <artifactId>TownyChat</artifactId>
-            <version>0.69</version>
+            <version>0.68</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/deps/TownyChat-0.69.jar</systemPath>
+            <systemPath>${project.basedir}/deps/TownyChat-0.68.jar</systemPath>
         </dependency>
     </dependencies>
     <properties>

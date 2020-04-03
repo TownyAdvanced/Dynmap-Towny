@@ -62,6 +62,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean reload = false;
     private boolean playersbytown;
     private boolean playersbynation;
+    private boolean dynamicNationColorsEnabled;
     
     FileConfiguration cfg;
     MarkerSet set;
@@ -521,14 +522,13 @@ public class DynmapTownyPlugin extends JavaPlugin {
         m.setRangeY(y, y);
         m.setBoostFlag(defstyle.getBoost(as, ns));
 
-        //If the nation, in-game, has chosen some style settings, use those
+        //If dynamic nation colors is enabled, read the color from the nation object
         try {
-            if(town.hasNation()) {
+            if(dynamicNationColorsEnabled && town.hasNation()) {
                 Nation nation = town.getNation();
-                String nationBoardLowerCase = nation.getNationBoard().toLowerCase();
 
-                if(nationBoardLowerCase.contains("mapcolor-")) {
-                    String colorAsString = nationBoardLowerCase.split("mapcolor-")[1].split("-")[0].trim();
+                if(nation.getMapColorHexCode() != null) {
+                    String colorAsString = nation.getMapColorHexCode();
                     int nationColor =  Integer.parseInt(colorAsString, 16);
 
                     //Set stroke style
@@ -544,7 +544,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         } catch (Exception ex) {}
 
     }
-    
+
     private MarkerIcon getMarkerIcon(Town town) {
         String id = town.getName();
         AreaStyle as = cusstyle.get(id);
@@ -1069,6 +1069,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 info("Dynmap does not support function needed for 'visibility-by-nation' - need to upgrade to 0.60 or later");
             }
         }
+
+        dynamicNationColorsEnabled = cfg.getBoolean("dynamic-nation-colors", true);
 
         /* Set up update job - based on periond */
         int per = cfg.getInt("update.period", 300);
