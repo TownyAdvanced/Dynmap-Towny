@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
 import com.palmergames.bukkit.towny.war.siegewar.locations.SiegeZone;
 import org.bukkit.Location;
+import com.palmergames.bukkit.towny.TownyFormatter;
+import com.palmergames.bukkit.towny.TownySettings;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -62,6 +65,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean reload = false;
     private boolean playersbytown;
     private boolean playersbynation;
+    private boolean dynamicNationColorsEnabled;
     
     FileConfiguration cfg;
     MarkerSet set;
@@ -433,6 +437,33 @@ public class DynmapTownyPlugin extends JavaPlugin {
             mgrs += r.getName();
         }
         v = v.replace("%playermanagers%", res);
+
+        String dispNames = "";
+        for (Resident r: town.getResidents()) {
+            Player p = Bukkit.getPlayer(r.getName());
+            if(dispNames.length()>0) mgrs += ", ";
+
+            if (p == null) {
+                dispNames += r.getFormattedName();
+                continue;
+            }
+
+            dispNames += p.getDisplayName();
+        }
+
+        v = v.replace("%residentdisplaynames%", dispNames);
+
+        v = v.replace("%residentcount%", town.getResidents().size() + "");
+        v = v.replace("%founded%", town.getRegistered() != 0 ? TownyFormatter.registeredFormat.format(town.getRegistered()) : "Not set");
+        v = v.replace("%board%", town.getTownBoard());
+
+        if (town.isTaxPercentage()) {
+            v = v.replace("%tax%", town.getTaxes() + "%");
+        } else {
+            v = v.replace("%tax%", "$" + town.getTaxes());
+        }
+
+        v = v.replace("%bank%", town.getAccount().getHoldingFormattedBalance());
         
         String nation = "";
 		try {
@@ -441,15 +472,28 @@ public class DynmapTownyPlugin extends JavaPlugin {
 		} catch (Exception e) {
 		}
         v = v.replace("%nation%", nation);
+
+		String natStatus = "";
+        if (town.isCapital()) {
+            natStatus = "Capital of " + nation;
+        } else if (town.hasNation()) {
+            natStatus = "Member of " + nation;
+        }
+
+        v = v.replace("%nationstatus%", natStatus);
+
+        v = v.replace("%upkeep%", "$" + TownySettings.getTownUpkeepCost(town));
+
         /* Build flags */
-        String flgs = "hasUpkeep: " + town.hasUpkeep();
+        String flgs = "Has Upkeep: " + town.hasUpkeep();
         flgs += "<br/>pvp: " + town.isPVP();
         flgs += "<br/>mobs: " + town.hasMobs();
         flgs += "<br/>public: " + town.isPublic();
         flgs += "<br/>explosion: " + town.isBANG();
         flgs += "<br/>fire: " + town.isFire();
-        flgs += "<br/>capital: " + town.isCapital();
+        flgs += "<br/>nation: " + nation;
         v = v.replace("%flags%", flgs);
+
         return v;
     }
     
@@ -481,14 +525,13 @@ public class DynmapTownyPlugin extends JavaPlugin {
         m.setRangeY(y, y);
         m.setBoostFlag(defstyle.getBoost(as, ns));
 
-        //If the nation, in-game, has chosen some style settings, use those
+        //If dynamic nation colors is enabled, read the color from the nation object
         try {
-            if(town.hasNation()) {
+            if(dynamicNationColorsEnabled && town.hasNation()) {
                 Nation nation = town.getNation();
-                String nationBoardLowerCase = nation.getNationBoard().toLowerCase();
 
-                if(nationBoardLowerCase.contains("mapcolor-")) {
-                    String colorAsString = nationBoardLowerCase.split("mapcolor-")[1].split("-")[0].trim();
+                if(nation.getMapColorHexCode() != null) {
+                    String colorAsString = nation.getMapColorHexCode();
                     int nationColor =  Integer.parseInt(colorAsString, 16);
 
                     //Set stroke style
@@ -504,7 +547,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         } catch (Exception ex) {}
 
     }
-    
+
     private MarkerIcon getMarkerIcon(Town town) {
         String id = town.getName();
         AreaStyle as = cusstyle.get(id);
@@ -1058,6 +1101,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 info("Dynmap does not support function needed for 'visibility-by-nation' - need to upgrade to 0.60 or later");
             }
         }
+
+        dynamicNationColorsEnabled = cfg.getBoolean("dynamic-nation-colors", true);
 
         /* Set up update job - based on periond */
         int per = cfg.getInt("update.period", 300);
