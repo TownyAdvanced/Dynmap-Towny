@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dynmap</groupId>
     <artifactId>Dynmap-Towny</artifactId>
-    <version>0.75</version>
+    <version>0.76</version>
 
     <build>
         <resources>
@@ -67,16 +67,16 @@
         <dependency>
             <groupId>com.palmergames.bukkit.towny</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.95.2.15</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/deps/Towny-0.95.2.15.jar</systemPath>
+            <version>0.96.1.0</version>
+            <scope>provided</scope>
+            <systemPath>${project.basedir}/deps/Towny-0.96.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>
             <artifactId>TownyChat</artifactId>
-            <version>0.65</version>
+            <version>0.69</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/deps/TownyChat-0.65.jar</systemPath>
+            <systemPath>${project.basedir}/deps/TownyChat-0.69.jar</systemPath>
         </dependency>
     </dependencies>
     <properties>
