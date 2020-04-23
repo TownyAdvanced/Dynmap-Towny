@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
-import com.palmergames.bukkit.towny.war.siegewar.locations.SiegeZone;
+import com.palmergames.bukkit.towny.war.siegewar.objects.Siege;
 import org.bukkit.Location;
 import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -794,9 +794,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
             try {
                 if(town.hasSiege() && town.getSiege().getStatus() == SiegeStatus.IN_PROGRESS) {
                     MarkerIcon siegeIcon = markerapi.getMarkerIcon("fire");
-                    SiegeZone siegeZone = town.getSiege().getSiegeZones().values().toArray(new SiegeZone[1])[0];
-                    String siegeZoneLabel = "Attacker: " + siegeZone.getAttackingNation().getName();
-                    Location siegeBannerLocation = siegeZone.getFlagLocation();
+                    Siege siege = town.getSiege();
+                    String siegeLabel = "Attacker: " + siege.getAttackingNation().getName();
+                    Location siegeBannerLocation = siege.getFlagLocation();
                     double siegeX = siegeBannerLocation.getX();
                     double siegeZ = siegeBannerLocation.getZ();
                     String siegeMarkerId = town.getName() + "__siege";
@@ -806,7 +806,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                                 siegeX, 64, siegeZ, siegeIcon, false);
                     } else {
                         siegeMarker.setLocation(town.getWorld().getName(), siegeX, 64, siegeZ);
-                        siegeMarker.setLabel(siegeZoneLabel);
+                        siegeMarker.setLabel(siegeLabel);
                         siegeMarker.setMarkerIcon(siegeIcon);
                     }
 
