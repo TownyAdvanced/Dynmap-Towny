@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -393,7 +393,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
     private void updateTownBank(Town town) {
     	try {
 			townBankBalanceCache.put(town, town.getAccount().getHoldingBalance());
-			townBankCache.put(town, System.currentTimeMillis() + new Long(new Random().nextInt(60000) + 300000)); // 5-6 Minutes added before next refresh.
+			townBankCache.put(town, System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(300000, 360000)); // 5-6 Minutes added before next refresh.
 		} catch (EconomyException ignored) {
 		}
     }
