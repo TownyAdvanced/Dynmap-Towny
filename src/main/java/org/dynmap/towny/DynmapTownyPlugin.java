@@ -8,12 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
 import com.palmergames.bukkit.towny.war.siegewar.objects.Siege;
 import org.bukkit.Location;
+import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
 import org.bukkit.Bukkit;
@@ -47,6 +49,7 @@ import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownBlockType;
 import com.palmergames.bukkit.towny.TownyUniverse;
+import com.palmergames.bukkit.towny.exceptions.EconomyException;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 
 import com.palmergames.bukkit.TownyChat.Chat;
@@ -67,6 +70,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
     private boolean playersbynation;
     private boolean dynamicNationColorsEnabled;
     
+    private HashMap<Town, Long> townBankCache = new HashMap<>();
+    private HashMap<Town, Double> townBankBalanceCache = new HashMap<>();
+        
     FileConfiguration cfg;
     MarkerSet set;
     long updperiod;
@@ -303,7 +309,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 updateTowns();
                 updateTownPlayerSets();
                 updateNationPlayerSets();
-                getServer().getScheduler().scheduleSyncDelayedTask(DynmapTownyPlugin.this, this, updperiod);
+                if (TownySettings.isUsingEconomy())
+                    updateTownBanks(System.currentTimeMillis());
             }
         }
     }
@@ -347,8 +354,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 
     private void updateTownPlayerSets() {
         if(!playersbytown) return;
-        Map<String,Town> towns = TownyUniverse.getInstance().getTownsMap();
-        for(Town t : towns.values()) {
+        for(Town t : TownyUniverse.getInstance().getTownsMap().values()) {
             updateTown(t);
         }
     }
@@ -373,12 +379,33 @@ public class DynmapTownyPlugin extends JavaPlugin {
 
     private void updateNationPlayerSets() {
         if(!playersbynation) return;
-        Map<String, Nation> nations = TownyUniverse.getInstance().getNationsMap();
-        for(Nation n : nations.values()) {
+        for(Nation n : TownyUniverse.getInstance().getNationsMap().values()) {
             updateNation(n);
         }
     }
 
+    private void updateTownBanks(long time) {
+		for (Town town : TownyUniverse.getInstance().getTownsMap().values())
+			if (townBankCache.containsKey(town)) {
+				if (time > townBankCache.get(town))
+					updateTownBank(town);    			
+    		} else {
+				updateTownBank(town);
+    		}
+    }
+    
+    private void updateTownBank(Town town) {
+
+    	double balance = 0.0;
+        try {
+			balance = town.getAccount().getHoldingBalance();
+		} catch (EconomyException | NullPointerException e) {
+			return;
+		}
+		townBankBalanceCache.put(town, balance);
+		townBankCache.put(town, System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(300000, 360000)); // 5-6 Minutes added before next refresh.
+    }
+    
     /* Cannot do this until towny add/remove player events are fixed
     private class PlayerUpdate implements Runnable {
         public void run() {
@@ -440,7 +467,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
 
         String dispNames = "";
         for (Resident r: town.getResidents()) {
-            Player p = Bukkit.getPlayer(r.getName());
+            @SuppressWarnings("deprecation")
+			Player p = Bukkit.getPlayer(r.getName());
             if(dispNames.length()>0) mgrs += ", ";
 
             if (p == null) {
@@ -460,10 +488,10 @@ public class DynmapTownyPlugin extends JavaPlugin {
         if (town.isTaxPercentage()) {
             v = v.replace("%tax%", town.getTaxes() + "%");
         } else {
-            v = v.replace("%tax%", "$" + town.getTaxes());
+            v = v.replace("%tax%", TownyEconomyHandler.getFormattedBalance(town.getTaxes()));
         }
 
-        v = v.replace("%bank%", town.getAccount().getHoldingFormattedBalance());
+       	v = v.replace("%bank%", townBankBalanceCache.containsKey(town) ? TownyEconomyHandler.getFormattedBalance(townBankBalanceCache.get(town)) : "Accounts loading...");
         
         String nation = "";
 		try {
@@ -482,7 +510,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 
         v = v.replace("%nationstatus%", natStatus);
 
-        v = v.replace("%upkeep%", "$" + TownySettings.getTownUpkeepCost(town));
+        v = v.replace("%upkeep%", TownyEconomyHandler.getFormattedBalance(TownySettings.getTownUpkeepCost(town)));
 
         /* Build flags */
         String flgs = "Has Upkeep: " + town.hasUpkeep();
@@ -1019,7 +1047,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         FileConfiguration cfg = getConfig();
         cfg.options().copyDefaults(true);   /* Load defaults, if needed */
         this.saveConfig();  /* Save updates, if needed */
-        
+
         /* Now, add marker set for mobs (make it transient) */
         set = markerapi.getMarkerSet("towny.markerset");
         if(set == null)
@@ -1109,8 +1137,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
         if(per < 15) per = 15;
         updperiod = (per*20);
         stop = false;
-        
-        getServer().getScheduler().scheduleSyncDelayedTask(this, new TownyUpdate(), 40);   /* First time is 2 seconds */
+
+        getServer().getScheduler().runTaskTimerAsynchronously(this, new TownyUpdate(), 40, per);
         
         info("version " + this.getDescription().getVersion() + " is activated");
     }
@@ -1121,6 +1149,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
             set = null;
         }
         resareas.clear();
+        townBankCache.clear();
+        townBankBalanceCache.clear();
         stop = true;
     }
 
