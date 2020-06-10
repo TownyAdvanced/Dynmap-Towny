@@ -67,9 +67,9 @@
         <dependency>
             <groupId>com.palmergames.bukkit.towny</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.96.1.7</version>
+            <version>0.96.1.11</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/deps/Towny-0.96.1.7.jar</systemPath>
+            <systemPath>${project.basedir}/deps/Towny-0.96.1.11.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>
