@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 
 import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
 import com.palmergames.bukkit.towny.war.siegewar.objects.Siege;
+import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarDynmapUtil;
+import com.palmergames.bukkit.util.BukkitTools;
 import org.bukkit.Location;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyFormatter;
@@ -68,6 +70,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean reload = false;
     private boolean playersbytown;
     private boolean playersbynation;
+    private boolean hideTacticallyInvisiblePlayers;
     private boolean dynamicNationColorsEnabled;
     
     private HashMap<Town, Long> townBankCache = new HashMap<>();
@@ -309,6 +312,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 updateTowns();
                 updateTownPlayerSets();
                 updateNationPlayerSets();
+                hideTacticallyInvisiblePlayers();
                 if (TownySettings.isUsingEconomy())
                     updateTownBanks(System.currentTimeMillis());
             }
@@ -381,6 +385,26 @@ public class DynmapTownyPlugin extends JavaPlugin {
         if(!playersbynation) return;
         for(Nation n : TownyUniverse.getInstance().getNationsMap().values()) {
             updateNation(n);
+        }
+    }
+
+    /**
+     * This method hides players who have 'tactical invisibility.
+     * It also un-hides players who do not.
+     */
+    private void hideTacticallyInvisiblePlayers() {
+        if(!hideTacticallyInvisiblePlayers) return;
+
+        List<Player> onlinePlayers = new ArrayList<>(BukkitTools.getOnlinePlayers());
+
+        for(Player player: onlinePlayers) {
+            if(player.hasMetadata(SiegeWarDynmapUtil.TACTICAL_INVISIBILITY_METADATA_ID)) {
+                //Hide from dynmap if tactically invis
+                api.setPlayerVisiblity(player, false);
+            } else {
+                //Otherwise show on dynmap
+                api.setPlayerVisiblity(player, true);
+            }
         }
     }
 
@@ -1130,6 +1154,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
             }
         }
 
+        hideTacticallyInvisiblePlayers = cfg.getBoolean("hide-tactically-invisible-players", false);
         dynamicNationColorsEnabled = cfg.getBoolean("dynamic-nation-colors", true);
 
         /* Set up update job - based on periond */
