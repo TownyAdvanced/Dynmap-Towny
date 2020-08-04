@@ -400,10 +400,10 @@ public class DynmapTownyPlugin extends JavaPlugin {
         for(Player player: onlinePlayers) {
             if(player.hasMetadata(SiegeWarDynmapUtil.TACTICAL_INVISIBILITY_METADATA_ID)) {
                 //Hide from dynmap if tactically invis
-                api.setPlayerVisiblity(player, false);
+                api.assertPlayerInvisibility(player, true, this);
             } else {
-                //Otherwise show on dynmap
-                api.setPlayerVisiblity(player, true);
+                //Otherwise don't hide
+                api.assertPlayerInvisibility(player, false, this);
             }
         }
     }
