@@ -70,9 +70,6 @@ public class DynmapTownyPlugin extends JavaPlugin {
     private boolean playersbytown;
     private boolean playersbynation;
     private boolean dynamicNationColorsEnabled;
-    
-    private HashMap<Town, Long> townBankCache = new HashMap<>();
-    private HashMap<Town, Double> townBankBalanceCache = new HashMap<>();
         
     FileConfiguration cfg;
     MarkerSet set;
@@ -310,8 +307,6 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 updateTowns();
                 updateTownPlayerSets();
                 updateNationPlayerSets();
-                if (TownySettings.isUsingEconomy())
-                    updateTownBanks(System.currentTimeMillis());
             }
         }
     }
@@ -385,27 +380,6 @@ public class DynmapTownyPlugin extends JavaPlugin {
         }
     }
 
-    private void updateTownBanks(long time) {
-		for (Town town : TownyUniverse.getInstance().getTowns())
-			if (townBankCache.containsKey(town)) {
-				if (time > townBankCache.get(town))
-					updateTownBank(town);    			
-    		} else {
-				updateTownBank(town);
-    		}
-    }
-    
-    private void updateTownBank(Town town) {
-
-    	double balance = 0.0;
-        try {
-			balance = town.getAccount().getHoldingBalance();
-		} catch (EconomyException | NullPointerException e) {
-			return;
-		}
-		townBankBalanceCache.put(town, balance);
-		townBankCache.put(town, System.currentTimeMillis() + ThreadLocalRandom.current().nextLong(300000, 360000)); // 5-6 Minutes added before next refresh.
-    }
     
     /* Cannot do this until towny add/remove player events are fixed
     private class PlayerUpdate implements Runnable {
@@ -493,7 +467,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 	            v = v.replace("%tax%", TownyEconomyHandler.getFormattedBalance(town.getTaxes()));
 	        }
 	
-	       	v = v.replace("%bank%", townBankBalanceCache.containsKey(town) ? TownyEconomyHandler.getFormattedBalance(townBankBalanceCache.get(town)) : "Accounts loading...");
+	       	v = v.replace("%bank%", TownyEconomyHandler.getFormattedBalance(town.getAccount().getCachedBalance()));
         }
         String nation = "";
 		try {
@@ -1136,8 +1110,6 @@ public class DynmapTownyPlugin extends JavaPlugin {
             set = null;
         }
         resareas.clear();
-        townBankCache.clear();
-        townBankBalanceCache.clear();
         stop = true;
     }
 
