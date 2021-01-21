@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -523,6 +524,12 @@ public class DynmapTownyPlugin extends JavaPlugin {
         flgs += "<br/>fire: " + town.isFire();
         flgs += "<br/>nation: " + nation;
         v = v.replace("%flags%", flgs);
+
+        //Town culture (TownyCultures plugin is needed for this)
+        if(town.hasMeta("townycultures_culture")) {
+            StringDataField cultureStringDataField = (StringDataField)town.getMetadata("townycultures_culture");
+            v = v.replace("%culture%", cultureStringDataField.getValue());
+        }
 
         return v;
     }
