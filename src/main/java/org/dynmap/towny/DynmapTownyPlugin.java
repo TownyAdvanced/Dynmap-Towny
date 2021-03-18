@@ -853,7 +853,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
                         /* Set popup */
                         BuildTownMarkerDescriptionEvent event = new BuildTownMarkerDescriptionEvent(town, desc);
                         Bukkit.getPluginManager().callEvent(event);
-                        home.setDescription(event.getDescription()); /* Set popup */
+                        home.setDescription(event.getDescription());
                     }
                     newmark.put(markid, home);
                 }
