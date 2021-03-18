@@ -638,7 +638,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
     	if(blocks.isEmpty())
     	    return;
         /* Build popup */
-        String desc = formatInfoWindow(town, btype);
+        BuildTownMarkerDescriptionEvent event = new BuildTownMarkerDescriptionEvent(town, formatInfoWindow(town, btype));
+        Bukkit.getPluginManager().callEvent(event);
+        String desc = event.getDescription();
 
     	HashMap<String, TileFlags> blkmaps = new HashMap<String, TileFlags>();
         LinkedList<TownBlock> nodevals = new LinkedList<TownBlock>();
@@ -804,12 +806,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     m.setCornerLocations(x, z); /* Replace corner locations */
                     m.setLabel(name);   /* Update label */
                 }
-                {
-                    /* Set popup */
-                    BuildTownMarkerDescriptionEvent event = new BuildTownMarkerDescriptionEvent(town, desc);
-                    Bukkit.getPluginManager().callEvent(event);
-                    m.setDescription(event.getDescription());
-                }
+                /* Set popup */
+                m.setDescription(desc);
                 /* Set line and fill properties */
                 String nation = NATION_NONE;
                 try {
@@ -849,12 +847,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
                         home.setLabel(name);   /* Update label */
                         home.setMarkerIcon(ico);
                     }
-                    {
-                        /* Set popup */
-                        BuildTownMarkerDescriptionEvent event = new BuildTownMarkerDescriptionEvent(town, desc);
-                        Bukkit.getPluginManager().callEvent(event);
-                        home.setDescription(event.getDescription());
-                    }
+                    /* Set popup */
+                    home.setDescription(desc);
+
                     newmark.put(markid, home);
                 }
             }
