@@ -51,6 +51,7 @@ import com.palmergames.bukkit.towny.exceptions.EconomyException;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.util.Version;
 import com.palmergames.bukkit.TownyChat.Chat;
+import org.dynmap.towny.events.BuildTownMarkerDescriptionEvent;
 
 public class DynmapTownyPlugin extends JavaPlugin {
 	
@@ -803,8 +804,12 @@ public class DynmapTownyPlugin extends JavaPlugin {
                     m.setCornerLocations(x, z); /* Replace corner locations */
                     m.setLabel(name);   /* Update label */
                 }
-                m.setDescription(desc); /* Set popup */
-            
+                {
+                    /* Set popup */
+                    BuildTownMarkerDescriptionEvent event = new BuildTownMarkerDescriptionEvent(town, desc);
+                    Bukkit.getPluginManager().callEvent(event);
+                    m.setDescription(event.getDescription());
+                }
                 /* Set line and fill properties */
                 String nation = NATION_NONE;
                 try {
@@ -844,7 +849,12 @@ public class DynmapTownyPlugin extends JavaPlugin {
                         home.setLabel(name);   /* Update label */
                         home.setMarkerIcon(ico);
                     }
-                    home.setDescription(desc); /* Set popup */
+                    {
+                        /* Set popup */
+                        BuildTownMarkerDescriptionEvent event = new BuildTownMarkerDescriptionEvent(town, desc);
+                        Bukkit.getPluginManager().callEvent(event);
+                        home.setDescription(event.getDescription()); /* Set popup */
+                    }
                     newmark.put(markid, home);
                 }
             }
