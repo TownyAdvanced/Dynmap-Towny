@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.palmergames.bukkit.config.ConfigNodes;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -496,11 +497,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
 	       	v = v.replace("%bank%", townBankBalanceCache.containsKey(town) ? TownyEconomyHandler.getFormattedBalance(townBankBalanceCache.get(town)) : "Accounts loading...");
         }
         String nation = "";
-		try {
-			if(town.hasNation())
-				nation = town.getNation().getName();
-		} catch (Exception e) {
-		}
+		if (town.hasNation())
+		    nation = TownyAPI.getInstance().getTownNationOrNull(town).getName();
+
         v = v.replace("%nation%", nation);
 
 		String natStatus = "";
@@ -516,14 +515,18 @@ public class DynmapTownyPlugin extends JavaPlugin {
         	v = v.replace("%upkeep%", TownyEconomyHandler.getFormattedBalance(TownySettings.getTownUpkeepCost(town)));
 
         /* Build flags */
-        String flgs = "Has Upkeep: " + town.hasUpkeep();
-        flgs += "<br/>pvp: " + town.isPVP();
-        flgs += "<br/>mobs: " + town.hasMobs();
-        flgs += "<br/>public: " + town.isPublic();
-        flgs += "<br/>explosion: " + town.isBANG();
-        flgs += "<br/>fire: " + town.isFire();
-        flgs += "<br/>nation: " + nation;
-        v = v.replace("%flags%", flgs);
+        String flags = "Has Upkeep: " + town.hasUpkeep();
+        flags += "<br/>pvp: " + town.isPVP();
+        flags += "<br/>mobs: " + town.hasMobs();
+        flags += "<br/>public: " + town.isPublic();
+        flags += "<br/>explosion: " + town.isBANG();
+        flags += "<br/>fire: " + town.isFire();
+        flags += "<br/>nation: " + nation;
+
+        if (TownySettings.getBoolean(ConfigNodes.TOWN_RUINING_TOWN_RUINS_ENABLED))
+            flags += "<br/>ruined: " + town.isRuined();
+
+        v = v.replace("%flags%", flags);
 
         return v;
     }
