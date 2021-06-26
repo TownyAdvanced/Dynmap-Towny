@@ -52,6 +52,7 @@ import com.palmergames.bukkit.towny.exceptions.EconomyException;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.util.Version;
 import com.palmergames.bukkit.TownyChat.Chat;
+import org.dynmap.towny.events.BuildTownFlagsEvent;
 import org.dynmap.towny.events.BuildTownMarkerDescriptionEvent;
 
 public class DynmapTownyPlugin extends JavaPlugin {
@@ -515,18 +516,22 @@ public class DynmapTownyPlugin extends JavaPlugin {
         	v = v.replace("%upkeep%", TownyEconomyHandler.getFormattedBalance(TownySettings.getTownUpkeepCost(town)));
 
         /* Build flags */
-        String flags = "Has Upkeep: " + town.hasUpkeep();
-        flags += "<br/>pvp: " + town.isPVP();
-        flags += "<br/>mobs: " + town.hasMobs();
-        flags += "<br/>public: " + town.isPublic();
-        flags += "<br/>explosion: " + town.isBANG();
-        flags += "<br/>fire: " + town.isFire();
-        flags += "<br/>nation: " + nation;
+        List<String> flags = new ArrayList<>();
+        flags.add("Has Upkeep: " + town.hasUpkeep());
+        flags.add("pvp: " + town.isPVP());
+        flags.add("mobs: " + town.hasMobs());
+        flags.add("public: " + town.isPublic());
+        flags.add("explosion: " + town.isBANG());
+        flags.add("fire: " + town.isFire());
+        flags.add("nation: " + nation);
 
         if (TownySettings.getBoolean(ConfigNodes.TOWN_RUINING_TOWN_RUINS_ENABLED))
-            flags += "<br/>ruined: " + town.isRuined();
+            flags.add("ruined: " + town.isRuined());
 
-        v = v.replace("%flags%", flags);
+        BuildTownFlagsEvent buildTownFlagsEvent = new BuildTownFlagsEvent(town, flags);
+        Bukkit.getPluginManager().callEvent(buildTownFlagsEvent);
+
+        v = v.replace("%flags%", String.join("<br/>", buildTownFlagsEvent.getFlags()));
 
         return v;
     }
