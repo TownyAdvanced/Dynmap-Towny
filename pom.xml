@@ -65,7 +65,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.palmergames.bukkit.towny</groupId>
+            <groupId>com.github.TownyAdvanced</groupId>
             <artifactId>Towny</artifactId>
             <version>0.97.0.0</version>
         </dependency>
