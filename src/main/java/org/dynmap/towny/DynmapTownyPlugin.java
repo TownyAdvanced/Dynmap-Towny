@@ -57,7 +57,7 @@ import org.dynmap.towny.events.BuildTownMarkerDescriptionEvent;
 
 public class DynmapTownyPlugin extends JavaPlugin {
 	
-	private static Version requiredTownyVersion = Version.fromString("0.97.0.0");
+	private static Version requiredTownyVersion = Version.fromString("0.97.0.18");
     private static Logger log;
     private static final String DEF_INFOWINDOW = "<div class=\"infowindow\"><span style=\"font-size:120%;\">%regionname% (%nation%)</span><br /> Mayor <span style=\"font-weight:bold;\">%playerowners%</span><br /> Associates <span style=\"font-weight:bold;\">%playermanagers%</span><br/>Flags<br /><span style=\"font-weight:bold;\">%flags%</span></div>";
     private static final String NATION_NONE = "_none_";
@@ -555,21 +555,27 @@ public class DynmapTownyPlugin extends JavaPlugin {
         //If dynamic nation colors is enabled, read the color from the nation object
         try {
             if(dynamicNationColorsEnabled) {
-                //Get town map colour (if any)
+                // Get the town colour for the line colour.
                 String townMapColorHexCode = town.getMapColorHexCode();
-                if(townMapColorHexCode != null) {
-                    //Get colour as int
-                    int townMapColorInteger = Integer.parseInt(townMapColorHexCode, 16);
+                // Get the nation colour for the fill colour.
+                String nationMapColourHexCode = town.getNationMapColorHexCode();
+                
+                // Fall back to the town's colour for line colour if the nation returned null;
+                if (nationMapColourHexCode == null)
+                	nationMapColourHexCode = town.getMapColorHexCode();
+                
+                //Get colour as int
+                int townMapColorInteger = Integer.parseInt(townMapColorHexCode, 16);
+                int nationMapColorInteger = Integer.parseInt(nationMapColourHexCode, 16);
 
-                    //Set stroke style
-                    double strokeOpacity = m.getLineOpacity();
-                    int strokeWeight = m.getLineWeight();
-                    m.setLineStyle(strokeWeight, strokeOpacity, townMapColorInteger);
+                //Set stroke style
+                double strokeOpacity = m.getLineOpacity();
+                int strokeWeight = m.getLineWeight();
+                m.setLineStyle(strokeWeight, strokeOpacity, nationMapColorInteger);
 
-                    //Set fill style
-                    double fillOpacity = m.getFillOpacity();
-                    m.setFillStyle(fillOpacity, townMapColorInteger);
-                }
+                //Set fill style
+                double fillOpacity = m.getFillOpacity();
+                m.setFillStyle(fillOpacity, townMapColorInteger);
             }
         } catch (Exception ex) {}
 
