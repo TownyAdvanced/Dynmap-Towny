@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dynmap</groupId>
     <artifactId>Dynmap-Towny</artifactId>
-    <version>0.87</version>
+    <version>0.86</version>
 
     <build>
         <resources>
