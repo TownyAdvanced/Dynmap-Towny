@@ -59,7 +59,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 	
 	private static Version requiredTownyVersion = Version.fromString("0.98.4.0");
     private static Logger log;
-    private static final String DEF_INFOWINDOW = "<div class=\"infowindow\"><span style=\"font-size:120%;\">%regionname% (%nation%)</span><br /> Mayor <span style=\"font-weight:bold;\">%playerowners%</span><br /> Associates <span style=\"font-weight:bold;\">%playermanagers%</span><br/>Flags<br /><span style=\"font-weight:bold;\">%flags%</span></div>";
+    private static final String DEF_INFOWINDOW = "<div class=\"infowindow\"> <h3 style=\"font-size:large;margin:0\">%regionname%</h3> <p style=\"margin:0\">%board%</p> <hr/> <p style=\"margin:0\"> <b>Founded:</b> %founded% </p> <p style=\"margin:0\"> <b>Mayor:</b> %playerowners% </p> <p style=\"margin:0\"> <b>Nation:</b> %nation% </p> <hr/> <p style=\"margin:0\"> <b>Bank:</b> %bank% </p> <p style=\"margin:0\"> <b>Upkeep:</b> %upkeep% </p> <p style=\"margin:0\"> <b>Resident(s):</b> %residentcount% </p> </div>";
     private static final String NATION_NONE = "_none_";
     Plugin dynmap;
     DynmapAPI api;
