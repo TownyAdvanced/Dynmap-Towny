@@ -54,6 +54,7 @@ import com.palmergames.util.StringMgmt;
 import com.palmergames.bukkit.TownyChat.Chat;
 import org.dynmap.towny.events.BuildTownFlagsEvent;
 import org.dynmap.towny.events.BuildTownMarkerDescriptionEvent;
+import org.dynmap.towny.events.TownRenderEvent;
 
 public class DynmapTownyPlugin extends JavaPlugin {
 	
@@ -546,9 +547,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
         return true;
     }
         
-    private void addStyle(Town town, String resid, String natid, AreaMarker m, TownBlockType btype) {
-        AreaStyle as = cusstyle.get(resid);	/* Look up custom style for town, if any */
-        AreaStyle ns = nationstyle.get(natid);	/* Look up nation style, if any */
+    private void addStyle(Town town, AreaMarker m, TownBlockType btype) {
+        AreaStyle as = cusstyle.get(town.getName());	/* Look up custom style for town, if any */
+        AreaStyle ns = nationstyle.get(town.hasNation() ? town.getNationOrNull().getName() : NATION_NONE);	/* Look up nation style, if any */
         
         if(btype == null) {
             m.setLineStyle(defstyle.getStrokeWeight(as, ns), defstyle.getStrokeOpacity(as, ns), defstyle.getStrokeColor(as, ns));
@@ -627,20 +628,11 @@ public class DynmapTownyPlugin extends JavaPlugin {
     private MarkerIcon getMarkerIcon(Town town) {
         if (town.isRuined())
         	return defstyle.ruinicon;
-    	
-        String id = town.getName();
-        AreaStyle as = cusstyle.get(id);
-        String natid = NATION_NONE;
-        try {
-        	if(town.getNation() != null)
-        		natid = town.getNation().getName();
-        } catch (Exception ex) {}
-        AreaStyle ns = nationstyle.get(natid);
-        
-        if(town.isCapital())
-            return defstyle.getCapitalMarker(as, ns);
-        else
-            return defstyle.getHomeMarker(as, ns);
+
+        AreaStyle as = cusstyle.get(town.getName());
+        AreaStyle ns = nationstyle.get(town.hasNation() ? town.getNationOrNull().getName() : NATION_NONE);
+
+        return town.isCapital() ? defstyle.getCapitalMarker(as, ns) : defstyle.getHomeMarker(as, ns);
     }
  
     enum direction { XPLUS, ZPLUS, XMINUS, ZMINUS };
@@ -857,12 +849,12 @@ public class DynmapTownyPlugin extends JavaPlugin {
                 /* Set popup */
                 m.setDescription(desc);
                 /* Set line and fill properties */
-                String nation = NATION_NONE;
-                try {
-                	if(town.getNation() != null)
-                		nation = town.getNation().getName();
-                } catch (Exception ex) {}
-                addStyle(town, town.getName(), nation, m, btype);
+                addStyle(town, m, btype);
+
+                /* Fire an event allowing other plugins to alter the AreaMarker */
+                TownRenderEvent renderEvent = new TownRenderEvent(town, m); 
+                Bukkit.getPluginManager().callEvent(renderEvent);
+                m = renderEvent.getAreaMarker();
 
                 /* Add to map */
                 newmap.put(polyid, m);
