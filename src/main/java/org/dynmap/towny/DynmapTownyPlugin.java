@@ -1073,7 +1073,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         updperiod = (per*20L);
         stop = false;
 
-        scheduler.runAsyncRepeating(new TownyUpdate(), 40, per);
+        ((TaskScheduler) scheduler).runAsyncRepeating(new TownyUpdate(), 40, per);
         
         info("version " + this.getDescription().getVersion() + " is activated");
     }
