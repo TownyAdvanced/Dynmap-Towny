@@ -96,10 +96,10 @@ public class DynmapTownyPlugin extends JavaPlugin {
     boolean chat_sendlogin;
     boolean chat_sendquit;
     String chatformat;
-    private final TaskScheduler scheduler;
+    private final Object scheduler;
 
     public DynmapTownyPlugin() {
-        this.scheduler = isFoliaClassPresent() ? new FoliaTaskScheduler(this) : new BukkitTaskScheduler(this);
+        this.scheduler = townyVersionCheck() ? isFoliaClassPresent() ? new FoliaTaskScheduler(this) : new BukkitTaskScheduler(this) : null;
     }
     
     @Override
@@ -965,8 +965,8 @@ public class DynmapTownyPlugin extends JavaPlugin {
             townychat = (Chat)p;
         }
         
-		if (Version.fromString(towny.getDescription().getVersion()).compareTo(requiredTownyVersion) < 0) {
-			getLogger().severe("Towny version does not meet required minimum version: " + requiredTownyVersion.toString());
+		if (!townyVersionCheck()) {
+			getLogger().severe("Towny version does not meet required minimum version: " + requiredTownyVersion);
 			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		} else {
@@ -980,6 +980,10 @@ public class DynmapTownyPlugin extends JavaPlugin {
             activate();
             prepForChat();
         }
+    }
+
+    private boolean townyVersionCheck() {
+        return Version.fromString(Towny.getPlugin().getDescription().getVersion()).compareTo(requiredTownyVersion) >= 0;
     }
     
     private void prepForChat() {
@@ -1105,7 +1109,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
         updperiod = (per*20L);
         stop = false;
 
-        scheduler.runAsyncRepeating(new TownyUpdate(), 40, per);
+        ((TaskScheduler) scheduler).runAsyncRepeating(new TownyUpdate(), 40, per);
         
         info("version " + this.getDescription().getVersion() + " is activated");
     }
