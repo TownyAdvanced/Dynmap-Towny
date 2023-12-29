@@ -1,4 +1,4 @@
-package org.dynmap.towny;
+package org.dynmap.towny.mapupdate;
 
 import java.util.HashMap;
 

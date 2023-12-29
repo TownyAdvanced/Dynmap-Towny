@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dynmap</groupId>
     <artifactId>Dynmap-Towny</artifactId>
-    <version>0.98</version>
+    <version>1.0.0</version>
 
     <build>
         <resources>
@@ -24,17 +24,21 @@
             </resource>
         </resources>
 
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
+    <plugins>
+        <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-compiler-plugin</artifactId>
+             <version>3.11.0</version>
+             <configuration>
+                 <release>8</release>
+                 <source>${java.version}</source>
+                 <target>${java.version}</target>
+                 <compilerArgs>
+                     <arg>-Xplugin:jabel</arg>
+                 </compilerArgs>
+             </configuration>
+        </plugin>
+    </plugins>
     </build>
     <repositories>
         <repository>
@@ -71,7 +75,8 @@
         <dependency>
             <groupId>com.palmergames.bukkit.towny</groupId>
             <artifactId>towny</artifactId>
-            <version>0.99.0.6</version>
+            <version>0.100.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.TownyAdvanced</groupId>
@@ -79,8 +84,15 @@
             <version>0.90</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.bsideup.jabel</groupId>
+            <artifactId>jabel-javac-plugin</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <properties>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
