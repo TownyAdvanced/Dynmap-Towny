@@ -39,6 +39,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 	private static DynmapTownyPlugin plugin;
 	private final TaskScheduler scheduler;
 	private ScheduledTask task;
+	private UpdateTowns townUpdater;
 	private DynmapAPI dynmapAPI;
 	private MarkerAPI markerAPI;
 	private MarkerSet markerSet;
@@ -143,6 +144,9 @@ public class DynmapTownyPlugin extends JavaPlugin {
 		/* Initialize the Styles from the config for use by the TownyUpdate task. */
 		AreaStyleHolder.initialize();
 
+		/* Create our UpdateTowns instance, used to actually draw the towns. */
+		townUpdater = new UpdateTowns();
+
 		/* Set up update job - based on period */
 		long per = Math.max(15, Settings.getUpdatePeriod()) * 20L;
 		task = scheduler.runAsyncRepeating(new TownyUpdate(), 40, per);
@@ -232,7 +236,7 @@ public class DynmapTownyPlugin extends JavaPlugin {
 	private class TownyUpdate implements Runnable {
 		public void run() {
 			if (TownyUniverse.getInstance().getDataSource() != null) {
-				scheduler.runAsync(new UpdateTowns());
+				scheduler.runAsync(townUpdater);
 
 				if (Settings.getPlayerVisibilityByTown())
 					TownyAPI.getInstance().getTowns().forEach(t -> updateTown(t));
