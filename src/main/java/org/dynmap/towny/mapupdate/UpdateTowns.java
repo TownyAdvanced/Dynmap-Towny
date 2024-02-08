@@ -47,9 +47,9 @@ public class UpdateTowns implements Runnable {
 		Map<String, AreaMarker> newmap = new HashMap<String, AreaMarker>(); /* Build new map */
 		Map<String, Marker> newmark = new HashMap<String, Marker>(); /* Build new map */
 
-		try {
-			/* Loop through towns */
-			for (Town t : TownyAPI.getInstance().getTowns()) {
+		/* Loop through towns */
+		for (Town t : TownyAPI.getInstance().getTowns()) {
+			try {
 				handleTown(t, newmap, newmark, null);
 				if (Settings.showingShops() && townHasTBsOfType(t, TownBlockType.COMMERCIAL)) {
 					handleTown(t, newmap, newmark, TownBlockType.COMMERCIAL);
@@ -63,17 +63,17 @@ public class UpdateTowns implements Runnable {
 				if (Settings.showingWilds() && townHasTBsOfType(t, TownBlockType.WILDS)) {
 					handleTown(t, newmap, newmark, TownBlockType.WILDS);
 				}
+			} catch (Exception e) {
+				plugin.getLogger().info(e.getMessage());
 			}
-			/* Now, review old maps - anything left is removed */
-			existingAreaMarkers.values().forEach(a -> a.deleteMarker());
-			existingMarkers.values().forEach(m -> m.deleteMarker());
-
-			/* And replace with new map */
-			existingAreaMarkers = newmap;
-			existingMarkers = newmark;
-		} catch (Exception e) {
-			plugin.getLogger().info(e.getMessage());
 		}
+		/* Now, review old maps - anything left is removed */
+		existingAreaMarkers.values().forEach(a -> a.deleteMarker());
+		existingMarkers.values().forEach(m -> m.deleteMarker());
+
+		/* And replace with new map */
+		existingAreaMarkers = newmap;
+		existingMarkers = newmark;
 	}
 
 	private boolean townHasTBsOfType(Town t, TownBlockType tbType) {
@@ -329,11 +329,11 @@ public class UpdateTowns implements Runnable {
 
 	private static boolean isVisible(String id, String worldname) {
 
-		if (Settings.getVisibleRegions().size() > 0 &&
+		if (Settings.visibleRegionsAreSet() &&
 			(Settings.getVisibleRegions().contains("world:" + worldname) == false || Settings.getVisibleRegions().contains(id) == false))
 				return false;
 
-		if (Settings.getHiddenRegions().size() > 0 &&
+		if (Settings.hiddenRegionsAreSet() &&
 			(Settings.getHiddenRegions().contains(id) || Settings.getHiddenRegions().contains("world:" + worldname)))
 				return false;
 		return true;

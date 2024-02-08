@@ -359,9 +359,21 @@ public class Settings {
 		return visibleRegions;
 	}
 
+	public static boolean visibleRegionsAreSet() {
+		Set<String> visibleRegions = getVisibleRegions();
+		// Pre-CommentedConfiguration configs will have their region set to [], which throws off the results.
+		return visibleRegions.size() > 0 && !(visibleRegions.size() == 1 && visibleRegions.contains("[]"));
+	}
+
 	public static Set<String> getHiddenRegions() {
 		if (hiddenRegions == null)
 			hiddenRegions = new HashSet<>(getStrArr(ConfigNodes.HIDDEN_ROOT));
 		return hiddenRegions;
+	}
+
+	public static boolean hiddenRegionsAreSet() {
+		Set<String> hiddenRegions = getHiddenRegions();
+		// Pre-CommentedConfiguration configs will have their region set to [], which throws off the results.
+		return hiddenRegions.size() > 0 && !(hiddenRegions.size() == 1 && hiddenRegions.contains("[]"));
 	}
 }
