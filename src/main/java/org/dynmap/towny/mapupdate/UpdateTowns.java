@@ -444,7 +444,7 @@ public class UpdateTowns implements Runnable {
 		}
 
 		if (town.hasOutpostSpawn())
-			drawOutpostIcons(town, newWorldNameMarkerMap);
+			drawOutpostIcons(town, newWorldNameMarkerMap, desc);
 	}
 
 	private MarkerIcon getMarkerIcon(Town town) {
@@ -481,7 +481,7 @@ public class UpdateTowns implements Runnable {
 		newWorldNameMarkerMap.put(markid, home);
 	}
 
-	private void drawOutpostIcons(Town town, Map<String, Marker> newWorldNameMarkerMap) {
+	private void drawOutpostIcons(Town town, Map<String, Marker> newWorldNameMarkerMap, String desc) {
 		MarkerIcon outpostIco = Settings.getOutpostIcon();
 		int i = 0;
 		for (Location loc : town.getAllOutpostSpawns()) {
@@ -504,7 +504,7 @@ public class UpdateTowns implements Runnable {
 				outpostMarker.setLabel(outpostName);
 				outpostMarker.setMarkerIcon(outpostIco);
 			}
-			outpostMarker.setDescription(townBlock.getName() != null ? townBlock.getName() : outpostName);
+			outpostMarker.setDescription(desc);
 			newWorldNameMarkerMap.put(outpostMarkerID, outpostMarker);
 		}
 	}
