@@ -13,6 +13,7 @@ import com.palmergames.bukkit.towny.TownyFormatter;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.Translation;
 import com.palmergames.bukkit.towny.utils.TownRuinUtil;
 import com.palmergames.util.StringMgmt;
 
@@ -27,7 +28,7 @@ public class TownInfoWindow {
 			String[] entire = residents;
 			residents = new String[35 + 1];
 			System.arraycopy(entire, 0, residents, 0, 35);
-			residents[35] = "and more...";
+			residents[35] = Translation.of("status_town_reslist_overlength");
 		}
 		
         String res = String.join(", ", residents);
@@ -49,7 +50,7 @@ public class TownInfoWindow {
         v = v.replace("%residentcount%", town.getResidents().size() + "");
         v = v.replace("%founded%", town.getRegistered() != 0 ? TownyFormatter.registeredFormat.format(town.getRegistered()) : "Not set");
         v = v.replace("%board%", town.getBoard());
-        v = v.replace("%towntrusted%", town.getTrustedResidents().isEmpty() ? "None"
+        v = v.replace("%towntrusted%", town.getTrustedResidents().isEmpty() ? Translation.of("status_no_town") //Translation is "None"
                 : StringMgmt.join(town.getTrustedResidents().stream().map(trustedRes-> trustedRes.getName()).collect(Collectors.toList()), ", "));
 
         if (TownySettings.isUsingEconomy() && TownyEconomyHandler.isActive()) {
@@ -75,26 +76,20 @@ public class TownInfoWindow {
 
         v = v.replace("%nationstatus%", natStatus);
 
-        v = v.replace("%public%", town.isPublic() ? "true" : "false");
-        v = v.replace("%peaceful%", town.isNeutral() ? "true" : "false");
+        v = v.replace("%public%", getEnabledDisabled(town.isPublic()));
+        v = v.replace("%peaceful%", getEnabledDisabled(town.isNeutral()));
         
         
         /* Build flags */
         List<String> flags = new ArrayList<>();
-        flags.add("Has Upkeep: " + town.hasUpkeep());
-        flags.add("pvp: " + town.isPVP());
-        flags.add("mobs: " + town.hasMobs());
-        flags.add("explosion: " + town.isExplosion());
-        flags.add("fire: " + town.isFire());
-        flags.add("nation: " + nation);
+        flags.add(Translation.of("msg_perm_hud_pvp") + getEnabledDisabled(town.isPVP()));
+        flags.add(Translation.of("msg_perm_hud_mobspawns") + getEnabledDisabled(town.hasMobs()));
+        flags.add(Translation.of("msg_perm_hud_explosions") + getEnabledDisabled(town.isExplosion()));
+        flags.add(Translation.of("msg_perm_hud_firespread") + getEnabledDisabled(town.isFire()));
 
-        if (TownySettings.getTownRuinsEnabled()) {
-        	String ruinedString = "ruined: " + town.isRuined(); 
-            if (town.isRuined())
-            	ruinedString += " (Time left: " + (TownySettings.getTownRuinsMaxDurationHours() - TownRuinUtil.getTimeSinceRuining(town)) + " hours)";
-
-           	flags.add(ruinedString);
-        }
+		if (TownySettings.getTownRuinsEnabled() && town.isRuined())
+			flags.add(Translation.of("msg_comptype_ruined") + " " + Translation.of("msg_time_remaining_before_full_removal",
+				TownySettings.getTownRuinsMaxDurationHours() - TownRuinUtil.getTimeSinceRuining(town)));
 
         BuildTownFlagsEvent buildTownFlagsEvent = new BuildTownFlagsEvent(town, flags);
         Bukkit.getPluginManager().callEvent(buildTownFlagsEvent);
@@ -103,4 +98,8 @@ public class TownInfoWindow {
 
         return v;
     }
+
+	private static String getEnabledDisabled(boolean b) {
+		return b ? Translation.of("enabled") : Translation.of("disabled");
+	}
 }
