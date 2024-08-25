@@ -78,6 +78,7 @@ public class TownInfoWindow {
 
         v = v.replace("%public%", getEnabledDisabled(town.isPublic()));
         v = v.replace("%peaceful%", getEnabledDisabled(town.isNeutral()));
+        v = v.replace("%conquered%", getEnabledDisabled(town.isConquered()));
         
         
         /* Build flags */
