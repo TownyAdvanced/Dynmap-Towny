@@ -356,7 +356,7 @@ public class UpdateTowns implements Runnable {
 
 		// We're dealing with something that has a custom AreaStyle applied via the
 		// custstyle or nationstyle in the config.yml, do not apply dynamic colours.
-		if (as != null || ns != null)
+		if (as != null || (ns != null && ns.fillcolor > -1 && ns.strokecolor > -1))
 			return;
 
         //Read dynamic colors from town/nation objects
