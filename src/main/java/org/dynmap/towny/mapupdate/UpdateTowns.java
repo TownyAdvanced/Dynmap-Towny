@@ -428,9 +428,11 @@ public class UpdateTowns implements Runnable {
 	 */
 
 	private void drawTownMarkers(Town town, Map<String, Marker> newWorldNameMarkerMap, String townName, String desc) {
+		if (town.hasOutpostSpawn())
+			drawOutpostIcons(town, newWorldNameMarkerMap, desc);
+
 		/* Now, add marker for home block */
 		TownBlock homeBlock = town.getHomeBlockOrNull();
-		
 		if (homeBlock != null && isVisible(townName, homeBlock.getWorld().getName())) {
 			MarkerIcon townHomeBlockIcon = getMarkerIcon(town);
 
@@ -443,8 +445,6 @@ public class UpdateTowns implements Runnable {
 				drawHomeBlockSpawn(newWorldNameMarkerMap, townName, desc, homeBlock, townHomeBlockIcon);
 		}
 
-		if (town.hasOutpostSpawn())
-			drawOutpostIcons(town, newWorldNameMarkerMap, desc);
 	}
 
 	private MarkerIcon getMarkerIcon(Town town) {
@@ -492,8 +492,9 @@ public class UpdateTowns implements Runnable {
 
 			double xx = TOWNBLOCKSIZE * townBlock.getX() + (TOWNBLOCKSIZE / 2);
 			double zz = TOWNBLOCKSIZE * townBlock.getZ() + (TOWNBLOCKSIZE / 2);
-			String outpostName = town.getName() + "_Outpost_" + i;
-			String outpostMarkerID = outpostName;
+			String outpostMarkerID = town.getName() + "_Outpost_" + i;
+			String outpostName = town.getName() + " Outpost" +  
+					(townBlock.getName().isEmpty() ? " " + i : ": " + townBlock.getName());
 			Marker outpostMarker = existingMarkers.remove(outpostMarkerID);
 			if (outpostMarker == null) {
 				outpostMarker = set.createMarker(outpostMarkerID, outpostName, townBlock.getWorld().getName(), xx, 64, zz, outpostIco, true);
