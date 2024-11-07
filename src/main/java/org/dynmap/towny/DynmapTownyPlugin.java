@@ -34,7 +34,7 @@ import com.palmergames.bukkit.towny.scheduling.impl.FoliaTaskScheduler;
 
 public class DynmapTownyPlugin extends JavaPlugin {
 	
-	private static final String requiredTownyVersion = "0.100.0.0";
+	private static final String requiredTownyVersion = "0.100.4.0";
 	private static Logger log;
 	private static DynmapTownyPlugin plugin;
 	private final TaskScheduler scheduler;
