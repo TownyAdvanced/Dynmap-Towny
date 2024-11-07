@@ -31,12 +31,8 @@
              <artifactId>maven-compiler-plugin</artifactId>
              <version>3.11.0</version>
              <configuration>
-                 <release>8</release>
                  <source>${java.version}</source>
                  <target>${java.version}</target>
-                 <compilerArgs>
-                     <arg>-Xplugin:jabel</arg>
-                 </compilerArgs>
              </configuration>
         </plugin>
     </plugins>
@@ -83,12 +79,6 @@
             <groupId>com.github.TownyAdvanced</groupId>
             <artifactId>TownyChat</artifactId>
             <version>0.90</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.bsideup.jabel</groupId>
-            <artifactId>jabel-javac-plugin</artifactId>
-            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
