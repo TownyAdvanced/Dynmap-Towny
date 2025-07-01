@@ -27,6 +27,7 @@ import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownBlockType;
 import com.palmergames.bukkit.towny.object.TownBlockTypeCache.CacheType;
 import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.Translation;
 
 public class UpdateTowns implements Runnable {
 
@@ -492,8 +493,10 @@ public class UpdateTowns implements Runnable {
 
 			double xx = TOWNBLOCKSIZE * townBlock.getX() + (TOWNBLOCKSIZE / 2);
 			double zz = TOWNBLOCKSIZE * townBlock.getZ() + (TOWNBLOCKSIZE / 2);
-			String outpostName = town.getName() + "_Outpost_" + i;
-			String outpostMarkerID = outpostName;
+			String outpostMarkerID = town.getName() + "_Outpost_" + i;
+			String outpostName = "%s %s %s".formatted(town.getName(),
+					Translation.of("outpost"),
+					townBlock.getFormattedName().isEmpty() ? i : townBlock.getFormattedName());
 			Marker outpostMarker = existingMarkers.remove(outpostMarkerID);
 			if (outpostMarker == null) {
 				outpostMarker = set.createMarker(outpostMarkerID, outpostName, townBlock.getWorld().getName(), xx, 64, zz, outpostIco, true);
