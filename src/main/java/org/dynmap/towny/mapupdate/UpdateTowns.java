@@ -483,7 +483,10 @@ public class UpdateTowns implements Runnable {
 	}
 
 	private void drawOutpostIcons(Town town, Map<String, Marker> newWorldNameMarkerMap, String desc) {
-		MarkerIcon outpostIco = Settings.getOutpostIcon();
+		AreaStyle as = cusstyle.get(town.getName());
+		AreaStyle ns = nationstyle.get(getNationNameOrNone(town));
+		MarkerIcon outpostIco = defstyle.getOutpostMarker(as, ns);
+
 		int i = 0;
 		for (Location loc : town.getAllOutpostSpawns()) {
 			i++;

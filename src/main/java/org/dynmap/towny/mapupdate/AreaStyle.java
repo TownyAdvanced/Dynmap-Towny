@@ -260,6 +260,17 @@ public class AreaStyle {
 			return getHomeMarker(cust, nat);
 	}
 
+	public MarkerIcon getOutpostMarker(AreaStyle cust, AreaStyle nat) {
+		if ((cust != null) && (cust.capitalicon != null))
+			return cust.outposticon;
+		else if ((nat != null) && (nat.outposticon != null))
+			return nat.outposticon;
+		else if (outposticon != null)
+			return outposticon;
+		else
+			return Settings.getOutpostIcon();
+	}
+
 	public MarkerIcon getRuinIcon() {
 		return ruinicon;
 	}
