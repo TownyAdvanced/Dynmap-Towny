@@ -261,7 +261,7 @@ public class AreaStyle {
 	}
 
 	public MarkerIcon getOutpostMarker(AreaStyle cust, AreaStyle nat) {
-		if ((cust != null) && (cust.capitalicon != null))
+		if ((cust != null) && (cust.outposticon != null))
 			return cust.outposticon;
 		else if ((nat != null) && (nat.outposticon != null))
 			return nat.outposticon;
