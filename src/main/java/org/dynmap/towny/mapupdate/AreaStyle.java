@@ -131,9 +131,11 @@ public class AreaStyle {
 		ruinicon = markerapi.getMarkerIcon("warning");
 
 		String outpostmarker = cfg.getString(path + ".outposticon", null);
-		outposticon = markerapi.getMarkerIcon(outpostmarker);
-		if (outposticon == null)
-			outposticon = markerapi.getMarkerIcon("tower");
+		if (outpostmarker != null) {
+			outposticon = markerapi.getMarkerIcon(outpostmarker);
+			if (outposticon == null)
+				outposticon = markerapi.getMarkerIcon("tower");
+		}
 	}
 
 	public int getStrokeColor(AreaStyle cust, AreaStyle nat) {
