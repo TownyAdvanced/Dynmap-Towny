@@ -130,7 +130,7 @@ public class AreaStyle {
 		}
 		ruinicon = markerapi.getMarkerIcon("warning");
 
-		String outpostmarker = cfg.getString(path + ".outposticon", "tower");
+		String outpostmarker = cfg.getString(path + ".outposticon", null);
 		outposticon = markerapi.getMarkerIcon(outpostmarker);
 		if (outposticon == null)
 			outposticon = markerapi.getMarkerIcon("tower");
